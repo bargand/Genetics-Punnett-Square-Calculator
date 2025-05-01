@@ -704,6 +704,109 @@
         { length: 100 },
         (_, i) => `color${i + 1}`
       );
+      const COLOR_VALUES = [
+        "#FFEBEE",
+        "#E8F5E9",
+        "#E3F2FD",
+        "#EDE7F6",
+        "#FFF8E1",
+        "#FBE9E7",
+        "#E0F7FA",
+        "#F1F8E9",
+        "#FFF3E0",
+        "#E8EAF6",
+        "#FCE4EC",
+        "#E0F2F1",
+        "#EFEBE9",
+        "#EEEEEE",
+        "#E1BEE7",
+        "#BBDEFB",
+        "#C8E6C9",
+        "#FFECB3",
+        "#D7CCC8",
+        "#F5F5F5",
+        "#FFCCCC",
+        "#FFCC99",
+        "#FFFF99",
+        "#CCFFCC",
+        "#CCE0FF",
+        "#F2C2FF",
+        "#D4E157",
+        "#FF7043",
+        "#64B5F6",
+        "#F06292",
+        "#9575CD",
+        "#FFB74D",
+        "#80DEEA",
+        "#C5E1A5",
+        "#FFEB3B",
+        "#FF4081",
+        "#FF80AB",
+        "#81C784",
+        "#4CAF50",
+        "#FBC02D",
+        "#A5D6A7",
+        "#D32F2F",
+        "#FFB300",
+        "#8C9EFF",
+        "#B39DDB",
+        "#03A9F4",
+        "#C2185B",
+        "#8BC34A",
+        "#F44336",
+        "#9C27B0",
+        "#BA68C8",
+        "#FF5722",
+        "#B2DFDB",
+        "#F57C00",
+        "#8E24AA",
+        "#7B1FA2",
+        "#01579B",
+        "#C62828",
+        "#F06292",
+        "#29B6F6",
+        "#FFB74D",
+        "#81D4FA",
+        "#D32F2F",
+        "#6A1B9A",
+        "#00E5FF",
+        "#7C4DFF",
+        "#FF8A65",
+        "#03DAC5",
+        "#90A4AE",
+        "#FF80AB",
+        "#FFB300",
+        "#00C853",
+        "#FF8F00",
+        "#F44336",
+        "#388E3C",
+        "#8BC34A",
+        "#0288D1",
+        "#FFEB3B",
+        "#F44336",
+        "#1565C0",
+        "#D32F2F",
+        "#4CAF50",
+        "#3F51B5",
+        "#7C4DFF",
+        "#90CAF9",
+        "#F50057",
+        "#B2EBF2",
+        "#AB47BC",
+        "#3E2723",
+        "#FFCC80",
+        "#FF9E80",
+        "#00BCD4",
+        "#9C27B0",
+        "#F44336",
+        "#FF1744",
+        "#D50000",
+        "#7B1FA2",
+        "#03A9F4",
+        "#4CAF50",
+        "#color100",
+        "#FFB300",
+      ];
 
       // Utility Functions
       function showMessage(element, message) {
@@ -725,7 +828,6 @@
 
       function normalizeGenotype(genotype) {
         let normalized = "";
-        // Process each gene (assuming 2 letters per gene)
         for (let i = 0; i < genotype.length; i += 2) {
           const gene = genotype.substr(i, 2);
           normalized += gene.split("").sort().join("");
@@ -737,7 +839,6 @@
         let phenotype = "";
         for (let i = 0; i < genotype.length; i += 2) {
           const gene = genotype.substr(i, 2);
-          // Dominant trait if at least one uppercase allele
           phenotype += gene.match(/[A-Z]/)
             ? gene[0].toUpperCase()
             : gene[0].toLowerCase();
@@ -769,7 +870,74 @@
           });
       }
 
-      // Main Functions
+      // Excel Download Functions
+      function downloadExcel() {
+        const table = punnettSquareDiv.querySelector("table");
+        if (!table) {
+          showMessage(errorMessageDiv, "No Punnett Square to download");
+          return;
+        }
+
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.table_to_sheet(table);
+
+        // Add colors to cells
+        const colorMap = getColorMapFromTable(table);
+        addColorsToWorksheet(ws, colorMap);
+
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(wb, ws, "Punnett Square");
+
+        // Generate and download file
+        const date = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `Punnett_Square_${date}.xlsx`);
+      }
+
+      function getColorMapFromTable(table) {
+        const colorMap = {};
+        const cells = table.querySelectorAll('td[class^="color-"]');
+
+        cells.forEach((cell) => {
+          const address = XLSX.utils.encode_cell({
+            r: cell.parentNode.rowIndex - 1,
+            c: cell.cellIndex,
+          });
+          const colorClass = Array.from(cell.classList).find((c) =>
+            c.startsWith("color-")
+          );
+          colorMap[address] =
+            COLOR_VALUES[parseInt(colorClass.replace("color-", "")) - 1];
+        });
+
+        return colorMap;
+      }
+
+      function addColorsToWorksheet(ws, colorMap) {
+        // Create styles for each color
+        const styles = {};
+        Object.entries(colorMap).forEach(([address, color]) => {
+          if (!ws[address]) return;
+
+          const styleID = `s${color.replace("#", "")}`;
+          if (!styles[styleID]) {
+            styles[styleID] = {
+              fill: { fgColor: { rgb: color.replace("#", "") } },
+              font: { bold: true },
+            };
+          }
+
+          ws[address].s = styleID;
+        });
+
+        // Add styles to workbook
+        if (Object.keys(styles).length > 0) {
+          if (!ws["!styles"]) ws["!styles"] = {};
+          Object.assign(ws["!styles"], styles);
+        }
+      }
+
+      // Main Punnett Square Generation
       function generateTable() {
         hideMessages();
         loader.style.display = "block";
@@ -886,14 +1054,25 @@
             <span class="ratio-label">Total combinations:</span>
             <span class="ratio-value">${total}</span>
           </div>
+          <button onclick="downloadExcel()" class="btn download-btn" style="margin-top: 15px;">
+            Download as Excel
+          </button>
         `;
       }
 
-      function downloadTable() {
-        alert(
-          "Export feature would be implemented here. For now, use browser screenshot tools."
-        );
-      }
+      // Initialize SheetJS library
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load SheetJS library dynamically if not already loaded
+        if (typeof XLSX === "undefined") {
+          const script = document.createElement("script");
+          script.src =
+            "https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js";
+          script.onload = function () {
+            console.log("SheetJS library loaded");
+          };
+          document.head.appendChild(script);
+        }
+      });
     </script>
   </body>
 </html>
