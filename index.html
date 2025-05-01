@@ -4,23 +4,99 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Punnett Square Generator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <div class="main_input_fields">
-      <h2 class="input_heading">Punnett Square Generator</h2>
-      <div class="trait_number">
-        <label>Enter number of traits (1-7): </label>
-        <input type="number" id="traitCount" min="1" max="7" value="2" class="main_First_Input"/>
-      </div>
-      <div>
-        <label>Enter trait combinations (comma-separated): </label>
-        <input type="text" id="traitInput" placeholder="e.g. Aa, aa, Bb, bb" class="main_Second_Input" />
-      </div>
-      <button onclick="generateTable()" class="main_button">Generate Punnett Square</button>
+    <div class="container">
+      <header>
+        <h1>Punnett Square Generator</h1>
+        <p class="subtitle">
+          Visualize genetic inheritance patterns with this interactive Punnett
+          square tool. Perfect for students, teachers, and genetics enthusiasts.
+        </p>
+      </header>
+
+      <div class="dropdown-guide">
+        <div class="dropdown-header">
+            <span>How to Use This Color Tool</span>
+            <span class="dropdown-icon">▼</span>
+        </div>
+        <div class="dropdown-content">
+            <div class="dropdown-content-inner">
+                <div class="guide-step">
+                    <h3><span class="step-number">1</span> Color Selection</h3>
+                    <p>Browse through our extensive collection of 1638 RGBA color codes. Click on any color to copy its code to your clipboard automatically.</p>
+                </div>
+                
+                <div class="guide-step">
+                    <h3><span class="step-number">2</span> Customization</h3>
+                    <p>Use the alpha channel (last two digits) to adjust transparency. FF = fully opaque, 00 = fully transparent, with values in between for semi-transparency.</p>
+                </div>
+                
+                <div class="guide-step">
+                    <h3><span class="step-number">3</span> Implementation</h3>
+                    <p>Paste the copied color code directly into your CSS, HTML, or design software. The #RRGGBBAA format works in modern browsers and most design tools.</p>
+                </div>
+                
+                <div class="guide-step">
+                    <h3><span class="step-number">4</span> Advanced Features</h3>
+                    <p>Use the search function to filter colors by hue, or sort by transparency levels. Create custom palettes by saving your favorite combinations.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <br /><br />
-    <div id="punnettSquare"></div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <div class="input-group">
+          <label for="traitCount">Number of Traits (1-7)</label>
+          <input
+            type="number"
+            id="traitCount"
+            min="1"
+            max="7"
+            value="2"
+            placeholder="Enter number of traits"
+          />
+          <small class="hint">For monohybrid cross: 1, dihybrid: 2, etc.</small>
+        </div>
+
+        <div class="input-group">
+          <label for="traitInput">Allele Combinations (comma-separated)</label>
+          <input
+            type="text"
+            id="traitInput"
+            placeholder="e.g. Aa, aa, Bb, bb"
+          />
+          <small class="hint"
+            >Enter all possible combinations (2^n where n is number of
+            traits)</small
+          >
+        </div>
+
+        <button onclick="generateTable()" class="btn btn-block">
+          Generate Punnett Square
+        </button>
+        <div class="loader" id="loader"></div>
+      </div>
+
+      <div class="results" id="resultsSection" style="display: none">
+        <div class="results-header">
+          <h2>Punnett Square Results</h2>
+          <button onclick="downloadTable()" class="btn">
+            Download as Image
+          </button>
+        </div>
+        <div id="punnettSquare"></div>
+        <div class="legend" id="colorLegend"></div>
+        <div id="ratioResults" class="ratio-container"></div>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>
