@@ -10,10 +10,7 @@ const successMessageDiv = document.getElementById("successMessage");
 const colorLegendDiv = document.getElementById("colorLegend");
 
 // Color classes for genotypes
-const COLOR_CLASSES = Array.from(
-  { length: 100 },
-  (_, i) => `color${i + 1}`
-);
+const COLOR_CLASSES = Array.from({ length: 100 }, (_, i) => `color${i + 1}`);
 const COLOR_VALUES = [
   "#FFEBEE",
   "#E8F5E9",
@@ -258,9 +255,7 @@ function generateTable() {
       // Validate input
       const traitCount = parseInt(traitCountInput.value);
       if (isNaN(traitCount) || traitCount < 1 || traitCount > 7) {
-        throw new Error(
-          "Please enter a number between 1 and 7 for traits"
-        );
+        throw new Error("Please enter a number between 1 and 7 for traits");
       }
 
       const traits = traitInput.value
@@ -313,10 +308,7 @@ function generateTable() {
       generateColorLegend(colorMap);
 
       resultsSection.style.display = "block";
-      showMessage(
-        successMessageDiv,
-        "Punnett Square generated successfully!"
-      );
+      showMessage(successMessageDiv, "Punnett Square generated successfully!");
     } catch (error) {
       showMessage(errorMessageDiv, error.message);
     } finally {
@@ -384,24 +376,24 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-      const dropdownHeader = document.querySelector('.dropdown-header');
-      const dropdownContent = document.querySelector('.dropdown-content');
-      
-      dropdownHeader.addEventListener('click', function() {
-          this.classList.toggle('active');
-          
-          if (dropdownContent.style.maxHeight) {
-              dropdownContent.style.maxHeight = null;
-          } else {
-              dropdownContent.style.maxHeight = dropdownContent.scrollHeight + "px";
-          }
-      });
-      
-      // Optional: Auto-open if it's the user's first visit
-      if (!localStorage.getItem('dropdownSeen')) {
-          dropdownHeader.classList.add('active');
-          dropdownContent.style.maxHeight = dropdownContent.scrollHeight + "px";
-          localStorage.setItem('dropdownSeen', 'true');
-      }
+document.addEventListener("DOMContentLoaded", function () {
+  const dropdownHeader = document.querySelector(".dropdown-header");
+  const dropdownContent = document.querySelector(".dropdown-content");
+
+  dropdownHeader.addEventListener("click", function () {
+    this.classList.toggle("active");
+
+    if (dropdownContent.style.maxHeight) {
+      dropdownContent.style.maxHeight = null;
+    } else {
+      dropdownContent.style.maxHeight = dropdownContent.scrollHeight + "px";
+    }
   });
+
+  // Optional: Auto-open if it's the user's first visit
+  if (!localStorage.getItem("dropdownSeen")) {
+    dropdownHeader.classList.add("active");
+    dropdownContent.style.maxHeight = dropdownContent.scrollHeight + "px";
+    localStorage.setItem("dropdownSeen", "true");
+  }
+});
