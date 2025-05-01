@@ -335,6 +335,38 @@
         margin-bottom: 20px;
         display: none;
       }
+      .ratio-container {
+  margin-top: 30px;
+  background: #f5f7ff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.ratio-title {
+  font-size: 1.2rem;
+  color: #6c63ff;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.ratio-item {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.ratio-label {
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.ratio-value {
+  background: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
     </style>
   </head>
   <body>
@@ -411,6 +443,7 @@
         </div>
         <div id="punnettSquare"></div>
         <div class="legend" id="colorLegend"></div>
+        <div id="ratioResults" class="ratio-container"></div>
       </div>
     </div>
 
